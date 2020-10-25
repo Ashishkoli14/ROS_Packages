@@ -1,0 +1,23 @@
+GIT: 
+username: vaibhav-eyantra
+password: vaibhav@eyantra
+
+-------------------------------------------------------------------------
+
+To upload the folder on git:
+1). git add -A
+2). git commit -m "<add_message>"
+3). git remote add origin https://github.com/vaibhav-eyantra/ROS_Packages.git
+4). git push origin master
+
+-------------------------------------------------------------------------
+
+Download git to your pc:
+git clone https://github.com/vaibhav-eyantra/ROS_Packages.git
+
+-------------------------------------------------------------------------
+
+Update all packages from github to your pc:
+git pull
+
+-------------------------------------------------------------------------
