@@ -77,6 +77,7 @@ class RosIotBridgeActionServer:
     # This is a callback function for MQTT Subscriptions
     def mqtt_sub_callback(self, client, userdata, message):
         payload = str(message.payload.decode("utf-8"))
+        URL = self._config_google_apps_spread_sheet_id
     
         print("[MQTT SUB CB] Message: ", payload)
         print("[MQTT SUB CB] Topic: ", message.topic)
@@ -85,6 +86,8 @@ class RosIotBridgeActionServer:
         msg_mqtt_sub.timestamp = rospy.Time.now()
         msg_mqtt_sub.topic = message.topic
         msg_mqtt_sub.message = payload
+
+        func_upload_to_app_script(URL, turtle_x=payload[1], turtle_y=payload[3], turtle_theta=payload[5])
         
         self._handle_ros_pub.publish(msg_mqtt_sub)
     
@@ -183,6 +186,24 @@ class RosIotBridgeActionServer:
     def on_cancel(self, goal_handle):
         rospy.loginfo("Received cancel request.")
         goal_id = goal_handle.get_goal_id()
+
+
+def func_upload_to_app_script(webapp_url, **kwargs):
+    """ func_upload_to_app_script(): This function uploads the data with key
+     values to spreedsheet.
+     
+     Input:
+     webapp_url: The URL of the web application of spreedsheet
+     key: The header of the column
+     value: The cotent to be published.    
+    """
+    parameters = {"id": "Sheet1"}
+    
+    for key, value in kwargs.items():
+        parameters[key] = value
+    
+    response = requests.get(webapp_url, params=parameters)
+    print(response.content)
 
 
 # Main
