@@ -60,9 +60,19 @@ class RosIotBridgeActionServer:
         ret = iot.mqtt_subscribe_thread_start(  self.mqtt_sub_callback, 
                                                         self._config_mqtt_server_url, 
                                                         self._config_mqtt_server_port, 
-                                                        self._config_mqtt_sub_topic, 
+                                                        self._config_mqtt_pub_topic, 
                                                         self._config_mqtt_qos   )
         if(ret == 0):
+            rospy.loginfo("MQTT Subscribe Thread Started")
+        else:
+            rospy.logerr("Failed to start MQTT Subscribe Thread")
+        
+        ret2 = iot.mqtt_subscribe_thread_start(  self.mqtt_sub_callback_start, 
+                                                        self._config_mqtt_server_url, 
+                                                        self._config_mqtt_server_port, 
+                                                        self._config_mqtt_sub_topic, 
+                                                        self._config_mqtt_qos   )
+        if(ret2 == 0):
             rospy.loginfo("MQTT Subscribe Thread Started")
         else:
             rospy.logerr("Failed to start MQTT Subscribe Thread")
@@ -86,8 +96,26 @@ class RosIotBridgeActionServer:
         msg_mqtt_sub.timestamp = rospy.Time.now()
         msg_mqtt_sub.topic = message.topic
         msg_mqtt_sub.message = payload
+        
+        if len(payload) >= 7:
+            lst = []
+            lst = payload.split("(")
+            lst = lst[1].split(")")
+            lst = lst[0].split(",")
+            self.func_upload_to_app_script(URL, turtle_x=lst[0], turtle_y=lst[1], turtle_theta=lst[2])
+    
+    # This is a callback function for MQTT Subscriptions
+    def mqtt_sub_callback_start(self, client, userdata, message):
+        payload = str(message.payload.decode("utf-8"))
+        URL = self._config_google_apps_spread_sheet_id
+    
+        print("[MQTT SUB CB] Message: ", payload)
+        print("[MQTT SUB CB] Topic: ", message.topic)
 
-        func_upload_to_app_script(URL, turtle_x=payload[1], turtle_y=payload[3], turtle_theta=payload[5])
+        msg_mqtt_sub = msgMqttSub()
+        msg_mqtt_sub.timestamp = rospy.Time.now()
+        msg_mqtt_sub.topic = message.topic
+        msg_mqtt_sub.message = payload
         
         self._handle_ros_pub.publish(msg_mqtt_sub)
     
@@ -188,22 +216,23 @@ class RosIotBridgeActionServer:
         goal_id = goal_handle.get_goal_id()
 
 
-def func_upload_to_app_script(webapp_url, **kwargs):
-    """ func_upload_to_app_script(): This function uploads the data with key
-     values to spreedsheet.
-     
-     Input:
-     webapp_url: The URL of the web application of spreedsheet
-     key: The header of the column
-     value: The cotent to be published.    
-    """
-    parameters = {"id": "Sheet1"}
-    
-    for key, value in kwargs.items():
-        parameters[key] = value
-    
-    response = requests.get(webapp_url, params=parameters)
-    print(response.content)
+    def func_upload_to_app_script(self, webapp_url, **kwargs):
+        """ func_upload_to_app_script(): This function uploads the data with key
+         values to spreedsheet.
+         
+         Input:
+         webapp_url: The URL of the web application of spreedsheet
+         key: The header of the column
+         value: The cotent to be published.    
+        """
+        webapp_url = "https://script.google.com/macros/s/" + webapp_url +"/exec"
+        parameters = {"id": "Sheet1"}
+        
+        for key, value in kwargs.items():
+            parameters[key] = value
+        
+        response = requests.get(webapp_url, params=parameters)
+        print(response.content)
 
 
 # Main
