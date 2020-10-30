@@ -2,6 +2,7 @@
 
 # ROS Node - Simple Action Server - Turtle
 
+# import packages
 import rospy
 import actionlib
 import math
@@ -11,6 +12,7 @@ import paho.mqtt.client as mqtt
 from turtlesim.msg import Pose
 from geometry_msgs.msg import Twist
 
+# import messages
 from pkg_task1.msg import msgTurtleAction       # Message Class that is used by ROS Actions internally
 from pkg_task1.msg import msgTurtleGoal         # Message Class that is used for Goal messages
 from pkg_task1.msg import msgTurtleResult       # Message Class that is used for Result messages
@@ -27,13 +29,7 @@ class SimpleActionServerTurtle:
                                                  msgTurtleAction,
                                                  execute_cb=self.func_on_rx_goal,
                                                  auto_start=False)
-        '''
-        * '/action_turtle' - The name of the action that will be used by ROS Nodes to communicate with this Simple Action Server.
-        * myActionMsgAction - The Message Class that is used by ROS Actions internally for this Simple Action Server
-        * execute_cb - Holds the function pointer to the function which will process incoming Goals from Simple Action Clients.
-        * auto_start = False - Only when self._sas.start() will be called then only this Simple Action Server will start.
-        '''
-
+        
         # Declare constants
         self._config_ros_pub_topic = '/turtle1/cmd_vel'
         self._config_ros_sub_topic = '/turtle1/pose'
@@ -159,9 +155,6 @@ class SimpleActionServerTurtle:
 
     #-------------------------------------------------------
     # Function to process Goals and send Results
-
-	
-
     def func_on_rx_goal(self, obj_msg_goal):
         rospy.loginfo("Received a Goal from Client.")
         rospy.loginfo(obj_msg_goal)

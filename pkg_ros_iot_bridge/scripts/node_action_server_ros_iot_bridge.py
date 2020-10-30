@@ -10,6 +10,7 @@ import paho.mqtt.client as mqtt
 # Import Custom Python Module to perfrom MQTT Tasks
 from pyiot import iot
 
+# import message class
 from pkg_ros_iot_bridge.msg import msgMqttSub
 from pkg_ros_iot_bridge.msg import msgRosIotAction      # Message Class that is used by ROS Actions internally
 from pkg_ros_iot_bridge.msg import msgRosIotGoal        # Message Class that is used for Goal Messages
@@ -83,7 +84,7 @@ class RosIotBridgeActionServer:
         
         rospy.loginfo("Started ROS-IoT Bridge Action Server.")
 
-    
+    #-------------------------------------------------------
     # This is a callback function for MQTT Subscriptions
     def mqtt_sub_callback(self, client, userdata, message):
         payload = str(message.payload.decode("utf-8"))
@@ -104,6 +105,7 @@ class RosIotBridgeActionServer:
             lst = lst[0].split(",")
             self.func_upload_to_app_script(URL, turtle_x=lst[0], turtle_y=lst[1], turtle_theta=lst[2])
     
+    #-------------------------------------------------------
     # This is a callback function for MQTT Subscriptions
     def mqtt_sub_callback_start(self, client, userdata, message):
         payload = str(message.payload.decode("utf-8"))
@@ -119,7 +121,7 @@ class RosIotBridgeActionServer:
         
         self._handle_ros_pub.publish(msg_mqtt_sub)
     
-    
+    #-------------------------------------------------------
     # This function will be called when Action Server receives a Goal
     def on_goal(self, goal_handle):
         goal = goal_handle.get_goal()
@@ -148,7 +150,7 @@ class RosIotBridgeActionServer:
             goal_handle.set_rejected()
             return
 
-
+    #-------------------------------------------------------
     # This function is called is a separate thread to process Goal.
     def process_goal(self, goal_handle):
 
@@ -209,13 +211,14 @@ class RosIotBridgeActionServer:
 
         rospy.loginfo("Goal ID: " + str(goal_id.id) + " Goal Processing Done.")
 
-    
+    #-------------------------------------------------------
     # This function will be called when Goal Cancel request is send to the Action Server
     def on_cancel(self, goal_handle):
         rospy.loginfo("Received cancel request.")
         goal_id = goal_handle.get_goal_id()
 
-
+    #-------------------------------------------------------
+    # function to upload data to google spreadsheet
     def func_upload_to_app_script(self, webapp_url, **kwargs):
         """ func_upload_to_app_script(): This function uploads the data with key
          values to spreedsheet.
@@ -238,7 +241,8 @@ class RosIotBridgeActionServer:
 # Main
 def main():
     rospy.init_node('node_ros_iot_bridge_action_server')
-
+    
+    # create object for Action Server
     action_server = RosIotBridgeActionServer()
 
     rospy.spin()

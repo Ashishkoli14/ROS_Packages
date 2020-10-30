@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
-# ROS Node - Simple Action Client - Turtle
+# ROS Node - Action Client - Turtle
 
+# import packages
 import rospy
 import actionlib
 import time
@@ -37,7 +38,8 @@ class SimpleActionClientTurtle:
         self._config_google_apps_spread_sheet_id = param_config_iot['google_apps']['spread_sheet_id']
         print(param_config_iot)
         self.action_client = RosIotBridgeActionClient()
- 
+
+    #-------------------------------------------------------
     # Function to send Goals to Action Servers
     def send_goal(self, arg_dis, arg_angle):
         
@@ -55,14 +57,8 @@ class SimpleActionClientTurtle:
                            feedback_cb=self.feedback_callback)
         
         rospy.loginfo("Goal has been sent.")
-
-    def on_publish(self,client, userdata, mid):
-        '''print("--- Publisher ---")
-        print("[INFO] Topic: {}".format(pub_topic))
-        print("[INFO] Message Published: {}".format(pub_message))
-        print("------------")'''
-        pass
-
+    
+    #-------------------------------------------------------
     # Function print result on Goal completion
     def done_callback(self, status, result):
         #publish to MQTT client 
@@ -73,25 +69,11 @@ class SimpleActionClientTurtle:
         rospy.loginfo("Status is : " + str(status))
         rospy.loginfo("Result is : " + str(result))
         print("______________Goal____________")
-
+    
+    #-------------------------------------------------------
     # Function to print feedback while Goal is being processed
     def feedback_callback(self, feedback):
         rospy.loginfo(feedback)
-
-def func_callback_topic_my_topic(myMsg):
-    global flag
-    if myMsg.message == "start":
-        flag = True
-        
-
-###################################################3#Different class###############################################
-###################################################3#Different class###############################################
-###################################################3#Different class###############################################
-###################################################3#Different class###############################################
-###################################################3#Different class###############################################
-###################################################3#Different class###############################################
-###################################################3#Different class###############################################
-###################################################3#Different class###############################################
 
 
 class RosIotBridgeActionClient:
@@ -114,7 +96,7 @@ class RosIotBridgeActionClient:
         self._ac.wait_for_server()
         rospy.loginfo("Action server up, we can send goals.")
 
-    
+    #-------------------------------------------------------
     # This function will be called when there is a change of state in the Action Client State Machine
     def on_transition(self, goal_handle):
         
@@ -156,6 +138,7 @@ class RosIotBridgeActionClient:
                 rospy.loginfo("Goal failed. Client Goal Handle #: " + str(index))
 
 
+    #-------------------------------------------------------
     # This function is used to send Goals to Action Server
     def send_goal(self, arg_protocol, arg_mode, arg_topic, arg_message):
         # Create a Goal Message object
@@ -177,6 +160,11 @@ class RosIotBridgeActionClient:
         return goal_handle
 
 
+# callback function for ROS Topic subscribtion
+def func_callback_topic_my_topic(myMsg):
+    global flag
+    if myMsg.message == "start":
+        flag = True
 
 
 # Main Function
@@ -193,23 +181,24 @@ def main():
         else:
             break
 
+    # code for tracing hexagon of two units
     obj_client.send_goal(2, 0)
-    rospy.sleep(i-5)
+    rospy.sleep(5)
 
     obj_client.send_goal(2, 60)
-    rospy.sleep(i)
+    rospy.sleep(10)
 
     obj_client.send_goal(2, 60)
-    rospy.sleep(i)
+    rospy.sleep(10)
 
     obj_client.send_goal(2, 60)
-    rospy.sleep(i)
+    rospy.sleep(10)
     
     obj_client.send_goal(2, 60)
-    rospy.sleep(i)
+    rospy.sleep(10)
 
     obj_client.send_goal(2, 60)
-    rospy.sleep(i)
+    rospy.sleep(10)
        
     # 4. Loop forever
     rospy.spin()
