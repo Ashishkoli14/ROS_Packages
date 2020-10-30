@@ -226,7 +226,7 @@ class RosIotBridgeActionServer:
          value: The cotent to be published.    
         """
         webapp_url = "https://script.google.com/macros/s/" + webapp_url +"/exec"
-        parameters = {"id": "Sheet1"}
+        parameters = {"id": "Sheet1", "team_id": "VB_0161", "unique_id": "AaAkVbYj"}
         
         for key, value in kwargs.items():
             parameters[key] = value

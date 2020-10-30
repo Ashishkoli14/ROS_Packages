@@ -1,8 +1,5 @@
 <launch>
-    <rosparam file="$(find pkg_ros_iot_bridge)/config/config_pyiot.yaml"/>
-    
-    <node pkg="pkg_ros_iot_bridge" type="node_action_server_ros_iot_bridge.py"
-              name="node_action_server_ros_iot_bridge" output="screen"/>
+
     
     <node pkg="turtlesim" type="turtlesim_node" name="node_turtlesim_node">
         <param name="/turtlesim_node/background_r" value="34" />
@@ -13,6 +10,11 @@
         <param name="/background_b" value="34" />
     </node>
     
+	<rosparam file="$(find pkg_ros_iot_bridge)/config/config_pyiot.yaml"/>
+
+	<node pkg="pkg_ros_iot_bridge" type="node_action_server_ros_iot_bridge.py"
+              name="node_action_server_ros_iot_bridge" output="screen"/>
+	
     <node pkg="pkg_task1" type="node_simple_action_server_turtle.py"
       name="node_simple_action_server_turtle" output="screen"/>
     
